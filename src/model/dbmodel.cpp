@@ -8,7 +8,7 @@ DBModel::DBModel()
     db.setDatabaseName("yattt.db");
     db.open();
 
-    createTableIfNotExists();
+    createTableIfDoesNotExist();
 }
 
 DBModel::~DBModel() {
@@ -28,7 +28,41 @@ void DBModel::addEntry(const std::__cxx11::string &name, const std::__cxx11::str
     }
 }
 
-void DBModel::createTableIfNotExists()
+std::vector<Task> DBModel::listTasks() const
+{
+    std::vector<Task> taskList;
+
+    QSqlQuery query;
+    bool success;
+    QString sql = QString("SELECT name, description, status_id FROM yattt_tasks;");
+    success = query.exec(sql);
+    if (!success) {
+        throw std::runtime_error("'SELECT' SQL command failed.\n\t" + sql.toStdString());
+    }
+    while(query.next()) {
+        QString name = query.value(0).toString();
+        QString description = query.value(1).toString();
+        int statusId = query.value(2).toInt();
+        std::string statusText;
+        QSqlQuery embeddedQuery;
+        sql = QString("SELECT status_text FROM yattt_task_status WHERE rowid = %1").arg(QString::number(statusId));
+        success = embeddedQuery.exec(sql);
+        if (!success) {
+            throw std::runtime_error("'SELECT' SQL command failed.\n\t" + sql.toStdString());
+        }
+        if (embeddedQuery.size() == 1) {
+            embeddedQuery.next();
+            statusText = embeddedQuery.value(0).toString().toStdString();
+        } else {
+            statusText = "UNKNOWN";
+        }
+        taskList.push_back(Task(name.toStdString(), description.toStdString(), statusText));
+    }
+
+    return taskList;
+}
+
+void DBModel::createTableIfDoesNotExist()
 {
     QSqlQuery query;
     QString sql = QString("SELECT * FROM yattt_task_status;");
