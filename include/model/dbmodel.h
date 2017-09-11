@@ -14,8 +14,9 @@ public:
     DBModel();
     virtual ~DBModel();
 
-    void addEntry(const std::string &name, const std::string &description);
+    int addEntry(const std::string &name, const std::string &description);
     std::vector<Task> listTasks() const;
+    void stopTask(int id);
 
 private: // Methods
     void createTableIfDoesNotExist();
