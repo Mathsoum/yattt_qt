@@ -1,6 +1,7 @@
 #include "include/model/dbmodel.h"
 
-#include <QDebug>
+#include <QVariant>
+#include <ctime>
 
 DBModel::DBModel()
 {
@@ -21,7 +22,8 @@ void DBModel::addEntry(const std::__cxx11::string &name, const std::__cxx11::str
     QString sql;
     bool success;
 
-    sql = QString("INSERT INTO yattt_tasks VALUES ('%1', '%2', datetime('now'), datetime('now'), (SELECT rowid FROM yattt_task_status WHERE status_text = 'RUNNING'));").arg(name.c_str()).arg(description.c_str());
+    auto now = std::time(nullptr);
+    sql = QString("INSERT INTO yattt_tasks VALUES ('%1', '%2', %3, %3, (SELECT rowid FROM yattt_task_status WHERE status_text = 'RUNNING'));").arg(name.c_str()).arg(description.c_str()).arg(now);
     success = query.exec(sql);
     if (!success) {
         throw std::runtime_error("'INSERT INTO' SQL command failed.\n\t" + sql.toStdString());
@@ -34,7 +36,7 @@ std::vector<Task> DBModel::listTasks() const
 
     QSqlQuery query;
     bool success;
-    QString sql = QString("SELECT name, description, status_id FROM yattt_tasks;");
+    QString sql = QString("SELECT name, description, status_id, starting_time, ending_time FROM yattt_tasks;");
     success = query.exec(sql);
     if (!success) {
         throw std::runtime_error("'SELECT' SQL command failed.\n\t" + sql.toStdString());
@@ -43,20 +45,19 @@ std::vector<Task> DBModel::listTasks() const
         QString name = query.value(0).toString();
         QString description = query.value(1).toString();
         int statusId = query.value(2).toInt();
-        std::string statusText;
+        int startingTimestamp = query.value(3).toInt();
+        int endingTimestamp = query.value(4).toInt();
         QSqlQuery embeddedQuery;
-        sql = QString("SELECT status_text FROM yattt_task_status WHERE rowid = %1").arg(QString::number(statusId));
+        sql = QString("SELECT status_text FROM yattt_task_status WHERE _rowid_ = %1;").arg(QString::number(statusId));
         success = embeddedQuery.exec(sql);
         if (!success) {
             throw std::runtime_error("'SELECT' SQL command failed.\n\t" + sql.toStdString());
         }
-        if (embeddedQuery.size() == 1) {
-            embeddedQuery.next();
+        std::string statusText = "UNKNOWN";
+        while(embeddedQuery.next()) {
             statusText = embeddedQuery.value(0).toString().toStdString();
-        } else {
-            statusText = "UNKNOWN";
         }
-        taskList.push_back(Task(name.toStdString(), description.toStdString(), statusText));
+        taskList.push_back(Task(name.toStdString(), description.toStdString(), statusText, startingTimestamp, endingTimestamp));
     }
 
     return taskList;
@@ -87,7 +88,7 @@ void DBModel::createTableIfDoesNotExist()
     sql = QString("SELECT * FROM yattt_tasks;");
     success = query.exec(sql);
     if (!success) {
-        sql = QString("CREATE TABLE yattt_tasks (name VARCHAR(100), description VARCHAR(200), starting_time DATETIME, ending_time DATETIME, status_id INTEGER, FOREIGN KEY(status_id) REFERENCES yattt_task_status(rowid));");
+        sql = QString("CREATE TABLE yattt_tasks (name VARCHAR(100), description VARCHAR(200), starting_time INTEGER, ending_time INTEGER, status_id INTEGER, FOREIGN KEY(status_id) REFERENCES yattt_task_status(rowid));");
         success = query.exec(sql);
         if (!success) {
             throw std::runtime_error("'CREATE TABLE' SQL command failed.\n\t" + sql.toStdString());

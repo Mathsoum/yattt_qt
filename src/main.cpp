@@ -42,16 +42,24 @@ int main(int argc, char *argv[])
         std::cout << "YATTT -- LIST command" << std::endl;
         auto list = model.listTasks();
         if (list.size() > 0) {
-            std::cout << std::left << std::setfill('-') << std::setw(20) << '+' << std::setw(50) << '+' << std::setw(20) << '+' << '+' << std::endl;
+            std::cout << std::left << std::setfill('-') << std::setw(20) << '+' << std::setw(50) << '+' << std::setw(30) << '+' << std::setw(30) << '+' << std::setw(20) << '+' << '+' << std::endl;
             for(auto task : list) {
                 std::cout << "| " << std::left << std::setfill(' ') << std::setw(18) << task.name;
                 std::cout << "| " << std::left << std::setfill(' ') << std::setw(48) << task.description;
+                std::time_t time = task.startingTimestamp;
+                std::string timeStr = std::asctime(std::localtime(&time));
+                timeStr.pop_back();
+                std::cout << "| " << std::left << std::setfill(' ') << std::setw(28) << timeStr;
+                time = task.endingTimestamp;
+                timeStr = std::asctime(std::localtime(&time));
+                timeStr.pop_back();
+                std::cout << "| " << std::left << std::setfill(' ') << std::setw(28) << timeStr;
                 std::cout << "| " << std::left << std::setfill(' ') << std::setw(18) << task.status;
                 std::cout << "|" << std::endl;
             }
-            std::cout << std::left << std::setfill('-') << std::setw(20) << '+' << std::setw(50) << '+' << std::setw(20) << '+' << '+' << std::endl;
+            std::cout << std::left << std::setfill('-') << std::setw(20) << '+' << std::setw(50) << '+' << std::setw(30) << '+' << std::setw(30) << '+' << std::setw(20) << '+' << '+' << std::endl;
         } else {
-            std::cout << "No tasks found" << std::endl;
+            std::cout << "No tasks found." << std::endl;
         }
     } else {
         std::cout << "Unknown command: " << command << std::endl;
