@@ -4,16 +4,30 @@
 #
 #-------------------------------------------------
 
+CONFIG(gui) {
+
+QT       += core gui sql
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+TEMPLATE = app
+TARGET = yattt_gui
+
+}
+
+CONFIG(cli) {
+
 QT       += core sql
 QT       -= gui
 
-#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = yattt
-
-CONFIG += c++11
 CONFIG += console
 CONFIG -= app_bundle
+
+TARGET = yattt_cli
+
+}
+
+CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -27,11 +41,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SOURCES += src/main.cpp\
+SOURCES +=\
     src/model/dbmodel.cpp \
-    src/model/task.cpp
+    src/model/task.cpp \
+    src/model/proxytaskmodel.cpp
 
 HEADERS  += include/model/dbmodel.h \
-    include/model/task.h
+    include/model/task.h \
+    include/model/proxytaskmodel.h
 
-FORMS    +=
+CONFIG(cli) {
+
+SOURCES += src/cli/main.cpp
+
+}
+
+CONFIG(gui) {
+
+SOURCES += src/gui/main.cpp \
+    src/gui/mainwindow.cpp
+
+HEADERS += include/gui/mainwindow.h
+
+FORMS    += \
+    ui/mainwindow.ui
+
+}
