@@ -43,12 +43,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES +=\
     src/model/dbmodel.cpp \
-    src/model/task.cpp \
-    src/model/proxytaskmodel.cpp
+    src/model/task.cpp
 
 HEADERS  += include/model/dbmodel.h \
-    include/model/task.h \
-    include/model/proxytaskmodel.h
+    include/model/task.h
 
 CONFIG(cli) {
 
@@ -58,12 +56,18 @@ SOURCES += src/cli/main.cpp
 
 CONFIG(gui) {
 
-SOURCES += src/gui/main.cpp \
-    src/gui/mainwindow.cpp
+SOURCES +=\
+    src/gui/main.cpp \
+    src/gui/mainwindow.cpp \
+    src/gui/dialogs/newtaskdialog.cpp
 
-HEADERS += include/gui/mainwindow.h
+HEADERS +=\
+    include/gui/mainwindow.h \
+    include/gui/dialogs/newtaskdialog.h
 
 FORMS    += \
-    ui/mainwindow.ui
-
+    ui/mainwindow.ui \
+    ui/dialogs/newtaskdialog.ui
 }
+
+FORMS += \
