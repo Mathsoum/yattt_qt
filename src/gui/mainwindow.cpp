@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowTitle("YATTT  \u2014  Yet Another Time Tracking Tool");
+
     dbModel = std::make_shared<DBModel>();
 
     ui->tableView->setModel(dbModel->getTableModel());
