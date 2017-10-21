@@ -32,11 +32,13 @@ int DBModel::addEntry(const std::string &name, const std::string &description, c
     QString sql;
     bool success;
 
-    sql = QString("INSERT INTO yattt_tasks VALUES ('%1', '%2', %3, %3,"
-                  "(SELECT rowid FROM yattt_task_status WHERE status_text = 'RUNNING'));")
+    sql = QString("INSERT INTO yattt_tasks"
+                  "       ('name', 'description', 'starting_time', 'status_id')"
+                  "VALUES ('%1',   '%2',           %3,              %4        );")
             .arg(name.c_str())
             .arg(description.c_str())
-            .arg(startTime);
+            .arg(startTime)
+            .arg("(SELECT rowid FROM yattt_task_status WHERE status_text = 'RUNNING')");
     success = query.exec(sql);
     if (!success) {
         throw std::runtime_error("'INSERT INTO' SQL command failed.\n\t" + sql.toStdString());
@@ -106,7 +108,8 @@ void DBModel::createTableIfDoesNotExist()
     bool success = query.exec(sql);
     if (!success) {
         qDebug() << "DBModel Table yattt_task_status does not exist. Creation...";
-        sql = QString("CREATE TABLE yattt_task_status (status_text VARCHAR(100));");
+        sql = QString("CREATE TABLE yattt_task_status ( rowid INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                                                       "status_text VARCHAR ( 100 ));");
         success = query.exec(sql);
         if (!success) {
             throw std::runtime_error("'CREATE TABLE' SQL command failed.\n\t" + sql.toStdString());
