@@ -4,13 +4,14 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <ctime>
 
 #include "include/model/task.h"
 
-class QSqlRelationalTableModel;
+class MainSqlTableModel;
 
 class DBModel
 {
@@ -22,7 +23,7 @@ public:
     std::vector<Task> listTasks() const;
     void stopTask(int id);
 
-    QSqlRelationalTableModel *getTableModel() const;
+    std::shared_ptr<MainSqlTableModel> getTableModel() const;
 
 private: // Methods
     void createTableIfDoesNotExist();
@@ -30,7 +31,7 @@ private: // Methods
 private: // Attributes
     QSqlDatabase db;
 
-    QSqlRelationalTableModel *tableModel;
+    std::shared_ptr<MainSqlTableModel> tableModel;
 };
 
 #endif // DBMODEL_H

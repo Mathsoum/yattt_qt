@@ -43,10 +43,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES +=\
     src/model/dbmodel.cpp \
-    src/model/task.cpp
+    src/model/task.cpp \
+    src/gui/model/mainsqltablemodel.cpp
 
 HEADERS  += include/model/dbmodel.h \
-    include/model/task.h
+    include/model/task.h \
+    include/gui/model/mainsqltablemodel.h
 
 CONFIG(cli) {
 

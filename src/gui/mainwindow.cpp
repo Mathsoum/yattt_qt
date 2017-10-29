@@ -6,6 +6,7 @@
 
 #include "include/model/dbmodel.h"
 #include "include/gui/dialogs/newtaskdialog.h"
+#include "include/gui/model/mainsqltablemodel.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,9 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("YATTT  \u2014  Yet Another Time Tracking Tool");
 
     dbModel = std::make_shared<DBModel>();
-
-    ui->tableView->setModel(dbModel->getTableModel());
-
+    ui->tableView->setModel(dbModel->getTableModel().get());
 }
 
 MainWindow::~MainWindow()
