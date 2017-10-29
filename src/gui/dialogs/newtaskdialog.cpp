@@ -40,6 +40,7 @@ void NewTaskDialog::on_okButton_released()
 {
     if (ui->nameLineEdit->text().isEmpty()) {
         QMessageBox::critical(this, tr("Missing name."), tr("You muse specify a task name."));
+        ui->nameLineEdit->setFocus();
     } else {
         accept();
     }

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>New task</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -85,6 +85,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>nameLineEdit</tabstop>
+  <tabstop>descriptionLineEdit</tabstop>
+  <tabstop>dateTimeEdit</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
