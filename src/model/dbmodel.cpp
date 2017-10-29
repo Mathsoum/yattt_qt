@@ -114,12 +114,12 @@ void DBModel::createTableIfDoesNotExist()
         if (!success) {
             throw std::runtime_error("'CREATE TABLE' SQL command failed.\n\t" + sql.toStdString());
         }
-        sql = QString("INSERT INTO yattt_task_status VALUES('RUNNING');");
+        sql = QString("INSERT INTO yattt_task_status VALUES(10, 'RUNNING');");
         success = query.exec(sql);
         if (!success) {
             throw std::runtime_error("'INSERT INTO' SQL command failed.\n\t" + sql.toStdString());
         }
-        sql = QString("INSERT INTO yattt_task_status VALUES('FINISHED');");
+        sql = QString("INSERT INTO yattt_task_status VALUES(20, 'FINISHED');");
         success = query.exec(sql);
         if (!success) {
             throw std::runtime_error("'INSERT INTO' SQL command failed.\n\t" + sql.toStdString());
