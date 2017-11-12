@@ -10,7 +10,7 @@
 MainSqlTableModel::MainSqlTableModel(QObject *parent, const QSqlDatabase &db)
     : QSqlRelationalTableModel(parent, db)
 {
-    setEditStrategy(QSqlTableModel::OnRowChange);
+    setEditStrategy(QSqlTableModel::OnFieldChange);
 }
 
 MainSqlTableModel::~MainSqlTableModel()
@@ -21,7 +21,7 @@ MainSqlTableModel::~MainSqlTableModel()
 QVariant MainSqlTableModel::data(const QModelIndex &index, int role) const
 {
     QVariant sqlData = QSqlRelationalTableModel::data(index, role);
-    if ((index.column() == 2 || index.column() == 3) && !sqlData.toString().isEmpty()) {
+    if ((index.column() == 3 || index.column() == 4) && !sqlData.toString().isEmpty()) {
         if (role == Qt::DisplayRole) {
             QDateTime timestamp;
             timestamp.setTime_t(sqlData.toInt());
@@ -36,23 +36,18 @@ QVariant MainSqlTableModel::headerData(int section, Qt::Orientation orientation,
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch(section) {
         case 0:
-            return "Name";
+            return "#";
         case 1:
-            return "Descritpion";
+            return "Name";
         case 2:
-            return "Starting time";
+            return "Descritpion";
         case 3:
-            return "Ending time";
+            return "Starting time";
         case 4:
+            return "Ending time";
+        case 5:
             return "Status";
         }
     }
     return QSqlRelationalTableModel::headerData(section, orientation, role);
-}
-
-bool MainSqlTableModel::setData(const QModelIndex &item, const QVariant &value, int role)
-{
-    bool success = QSqlRelationalTableModel::setData(item, value, role);
-
-    return success;
 }

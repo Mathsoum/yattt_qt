@@ -2,7 +2,6 @@
 
 #include <QVariant>
 #include <QDebug>
-#include <QSqlRelationalTableModel>
 
 #include "include/gui/model/mainsqltablemodel.h"
 
@@ -13,7 +12,7 @@ DBModel::DBModel()
     db.setDatabaseName("yattt.db");
     db.open();
 
-    tableModel = std::make_shared<QSqlRelationalTableModel>(nullptr, db);
+    tableModel = std::make_shared<MainSqlTableModel>(nullptr, db);
     tableModel->setTable("yattt_tasks");
     tableModel->setRelation(5, QSqlRelation("yattt_task_status", "rowid", "status_text"));
 
@@ -209,7 +208,7 @@ void DBModel::createTableIfDoesNotExist()
     }
 }
 
-std::shared_ptr<QSqlRelationalTableModel> DBModel::getTableModel() const
+std::shared_ptr<MainSqlTableModel> DBModel::getTableModel() const
 {
     return tableModel;
 }

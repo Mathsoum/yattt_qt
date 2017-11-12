@@ -35,12 +35,19 @@ QDateTime CustomCalendarWidget::getDateTime() const
 
 void CustomCalendarWidget::mouseDoubleClickEvent(QMouseEvent */*event*/)
 {
+    qDebug() << "[CustomCalendarWidget] Mouse double clicked !";
     validate();
 }
 
 void CustomCalendarWidget::keyReleaseEvent(QKeyEvent *event)
 {
-    QWidget::keyReleaseEvent(event);
+    qDebug() << "[CustomCalendarWidget] Key released event !";
+    if (event->key() == Qt::Key_Enter) {
+        event->accept();
+        validate();
+    } else {
+        QWidget::keyReleaseEvent(event);
+    }
 }
 
 void CustomCalendarWidget::paintEvent(QPaintEvent *event)

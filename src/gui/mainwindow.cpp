@@ -16,13 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle("YATTT  \u2014  Yet Another Time Tracking Tool");
+    setWindowTitle("YATTT \u2014 Yet Another Time Tracking Tool");
 
     dbModel = std::make_shared<DBModel>();
     ui->tableView->setModel(dbModel->getTableModel().get());
     ui->tableView->setItemDelegateForColumn(3, new DateTimeDelegate());
     ui->tableView->setItemDelegateForColumn(4, new DateTimeDelegate());
     ui->tableView->setItemDelegateForColumn(5, new QSqlRelationalDelegate());
+
+    ui->tableView->hideColumn(0);
 }
 
 MainWindow::~MainWindow()
