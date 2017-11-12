@@ -44,11 +44,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES +=\
     src/model/dbmodel.cpp \
     src/model/task.cpp \
-    src/gui/model/mainsqltablemodel.cpp
+    src/gui/model/mainsqltablemodel.cpp \
+    src/gui/model/datetimedelegate.cpp \
+    src/gui/model/customcalendarwidget.cpp
 
 HEADERS  += include/model/dbmodel.h \
     include/model/task.h \
-    include/gui/model/mainsqltablemodel.h
+    include/gui/model/mainsqltablemodel.h \
+    include/gui/model/datetimedelegate.h \
+    include/gui/model/customcalendarwidget.h
 
 CONFIG(cli) {
 
@@ -73,3 +77,4 @@ FORMS    += \
 }
 
 FORMS += \
+    ui/widgets/customcalendarwidget.ui

@@ -11,7 +11,7 @@
 
 #include "include/model/task.h"
 
-class MainSqlTableModel;
+class QSqlRelationalTableModel;
 
 class DBModel
 {
@@ -23,7 +23,9 @@ public:
     std::vector<Task> listTasks() const;
     void stopTask(int id);
 
-    std::shared_ptr<MainSqlTableModel> getTableModel() const;
+    std::shared_ptr<QSqlRelationalTableModel> getTableModel() const;
+
+    void populateWithTestValues();
 
 private: // Methods
     void createTableIfDoesNotExist();
@@ -31,7 +33,7 @@ private: // Methods
 private: // Attributes
     QSqlDatabase db;
 
-    std::shared_ptr<MainSqlTableModel> tableModel;
+    std::shared_ptr<QSqlRelationalTableModel> tableModel;
 };
 
 #endif // DBMODEL_H

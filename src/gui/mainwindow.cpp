@@ -2,11 +2,13 @@
 #include "ui_mainwindow.h"
 
 #include <QSqlRelationalTableModel>
+#include <QSqlRelationalDelegate>
 #include <QDateTime>
 
 #include "include/model/dbmodel.h"
 #include "include/gui/dialogs/newtaskdialog.h"
 #include "include/gui/model/mainsqltablemodel.h"
+#include "include/gui/model/datetimedelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     dbModel = std::make_shared<DBModel>();
     ui->tableView->setModel(dbModel->getTableModel().get());
+    ui->tableView->setItemDelegateForColumn(3, new DateTimeDelegate());
+    ui->tableView->setItemDelegateForColumn(4, new DateTimeDelegate());
+    ui->tableView->setItemDelegateForColumn(5, new QSqlRelationalDelegate());
 }
 
 MainWindow::~MainWindow()

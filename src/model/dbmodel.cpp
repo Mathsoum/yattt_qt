@@ -13,12 +13,12 @@ DBModel::DBModel()
     db.setDatabaseName("yattt.db");
     db.open();
 
-    tableModel = std::make_shared<MainSqlTableModel>(nullptr, db);
+    tableModel = std::make_shared<QSqlRelationalTableModel>(nullptr, db);
     tableModel->setTable("yattt_tasks");
-    tableModel->setRelation(4, QSqlRelation("yattt_task_status", "rowid", "status_text"));
-    tableModel->select();
+    tableModel->setRelation(5, QSqlRelation("yattt_task_status", "rowid", "status_text"));
 
     createTableIfDoesNotExist();
+    tableModel->select();
 }
 
 DBModel::~DBModel() {
@@ -102,6 +102,59 @@ void DBModel::stopTask(int id)
     }
 }
 
+void DBModel::populateWithTestValues()
+{
+    std::vector<std::map<std::string, std::string>> entries {
+        {
+            { "rowid", "1" },
+            { "name", "Task #1" },
+            { "description", "Some description" },
+            { "starting_time", "0" },
+            { "ending_time", "0" },
+            { "status_id", "10" },
+        },
+        {
+            { "rowid", "2" },
+            { "name", "Task #2" },
+            { "description", "" },
+            { "starting_time", "0" },
+            { "ending_time", "0" },
+            { "status_id", "10" },
+        },
+        {
+            { "rowid", "3" },
+            { "name", "Task #3" },
+            { "description", "Some other longer description" },
+            { "starting_time", "0" },
+            { "ending_time", "0" },
+            { "status_id", "10" },
+        },
+    };
+
+    QSqlQuery query;
+    for (auto entry : entries) {
+        QString sql = QString("INSERT INTO yattt_tasks VALUES(%1, '%2', '%3', %4, %5, %6)")
+                .arg(entry["rowid"].c_str())
+                .arg(entry["name"].c_str())
+                .arg(entry["description"].c_str())
+                .arg(entry["starting_time"].c_str())
+                .arg(entry["ending_time"].c_str())
+                .arg(entry["status_id"].c_str());
+        bool success = query.exec(sql);
+        if (!success) {
+            throw std::runtime_error("INSERT command failed while populating the DB with test entries.");
+        } else {
+            qDebug() << "TEST entry added:";
+            qDebug() << " - ROWID : " << entry["rowid"].c_str();
+            qDebug() << " - Name : " << entry["name"].c_str();
+            qDebug() << " - Description : " << entry["description"].c_str();
+            qDebug() << " - Starting time : " << entry["starting_time"].c_str();
+            qDebug() << " - Ending time : " << entry["ending_time"].c_str();
+            qDebug() << " - Status ID : " << entry["status_id"].c_str();
+        }
+    }
+}
+
 void DBModel::createTableIfDoesNotExist()
 {
     QSqlQuery query;
@@ -109,8 +162,11 @@ void DBModel::createTableIfDoesNotExist()
     bool success = query.exec(sql);
     if (!success) {
         qDebug() << "DBModel Table yattt_task_status does not exist. Creation...";
-        sql = QString("CREATE TABLE yattt_task_status ( rowid INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                                                       "status_text VARCHAR ( 100 ));");
+        sql = QString("CREATE TABLE yattt_task_status ("
+                      "rowid INTEGER UNIQUE, "
+                      "status_text VARCHAR ( 30 ), "
+                      "PRIMARY KEY( 'rowid' ))"
+                      "WITHOUT ROWID;");
         success = query.exec(sql);
         if (!success) {
             throw std::runtime_error("'CREATE TABLE' SQL command failed.\n\t" + sql.toStdString());
@@ -133,22 +189,27 @@ void DBModel::createTableIfDoesNotExist()
     if (!success) {
         qDebug() << "DBModel Table yattt_tasks does not exist. Creation...";
         sql = QString("CREATE TABLE yattt_tasks ("
-                      "name VARCHAR(100),"
-                      "description VARCHAR(200),"
-                      "starting_time INTEGER,"
-                      "ending_time INTEGER,"
-                      "status_id INTEGER,"
-                      "FOREIGN KEY(status_id) REFERENCES yattt_task_status(rowid));");
+                      "rowid INTEGER UNIQUE, "
+                      "name VARCHAR(100), "
+                      "description VARCHAR(200), "
+                      "starting_time INTEGER, "
+                      "ending_time INTEGER, "
+                      "status_id INTEGER, "
+                      "PRIMARY KEY('rowid'), "
+                      "FOREIGN KEY(status_id) REFERENCES yattt_task_status('rowid'))"
+                      "WITHOUT ROWID;");
         success = query.exec(sql);
         if (!success) {
             throw std::runtime_error("'CREATE TABLE' SQL command failed.\n\t" + sql.toStdString());
         }
+
+        populateWithTestValues();
     } else {
         qDebug() << "DBModel Table yattt_tasks exists. Skipping creation.";
     }
 }
 
-std::shared_ptr<MainSqlTableModel> DBModel::getTableModel() const
+std::shared_ptr<QSqlRelationalTableModel> DBModel::getTableModel() const
 {
     return tableModel;
 }
